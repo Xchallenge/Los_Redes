@@ -1,0 +1,85 @@
+hostnamectl set-hostname srvweb
+
+nano /etc/hosts		
+127.0.0.1       localhost
+127.0.1.1       srvweb
+172.16.28.21	www.xchallenge.com.br
+IP_SENAI	www.meusite.com.br
+
+nano /etc/apt/sources.list
+
+Remover todos os comentários e deixar apenas esse repositório:
+deb http://deb.debian.org/debian/ bullseye main contrib
+
+=Atualizar o Apache=
+apt update
+
+=Instalar o Apache=
+apt install apache2  -y
+
+
+•	Criar o diretório do site
+mkdir /var/www/Xchallenge
+
+
+•	Criar o arquivo de configuração do site
+nano /etc/apache2/sites-available/Xchallenge.conf
+
+
+•	Conteúdo do arquivo:
+
+<VirtualHost *:80>
+	ServerName www.xchallenge.com
+	ServerAdmin xchallenge.com
+	DocumentRoot /var/www/Xchallenge
+</VirtualHost>
+
+•	Criar link simbólico para o arquivo de configuração do site:
+ln -s /etc/apache2/sites-available/Xchallenge.conf /etc/apache2/sites-enabled/Xchallenge.conf
+
+Ou 
+# a2ensite Xchallenge.conf
+
+
+# <VirtualHost *:80>
+	ServerName www.xchallenge.com
+	ServerAdmin xchallenge.com
+	DocumentRoot /var/www/Xchallenge
+</VirtualHost>
+
+
+•	Criar arquivo e copiar conteúdo do site:
+nano /var/www/Xchallenge/index.html
+
+
+•	Exemplo de HTML:
+<htmlcop lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Site</title>
+</head>
+<body>     
+    <h1>Seja bem vindo ao Meu Site</h1>
+    <hr>
+    <p>Esse site fala sobre a minha pessoa</p>
+    
+</body>
+</html>
+
+
+•	Alterar o dono da diretório www
+chown -R www-data:www-data /var/www
+
+
+•	Alterar as permissões da diretório www
+chmod -R 755 /var/www
+
+•	Reiniciar  o serviço Apache:
+systemctl restart apache2
+
+•	Habilitar o serviço Apache:
+systemctl enable apache2
+
+•	Ver o status do serviço Apache:
+systemctl status apache2
