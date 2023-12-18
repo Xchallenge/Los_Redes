@@ -1,11 +1,5 @@
 hostnamectl set-hostname srvweb
 
-nano /etc/hosts		
-127.0.0.1       localhost
-127.0.1.1       srvweb
-172.16.28.21	www.xchallenge.com.br
-IP_SENAI	www.meusite.com.br
-
 nano /etc/apt/sources.list
 
 Remover todos os comentários e deixar apenas esse repositório:
