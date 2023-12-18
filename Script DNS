@@ -1,0 +1,66 @@
+apt install bind9 lynx vim resolvconf -y
+
+systemctl status resolvconf.service
+
+systemctl enable resolvconf.service
+
+nano /etc/resolvconf/resolv.conf.d/head
+
+Adicionar:
+nameserver 172.16.28.21
+
+Reiniciar, resolvconf, a placa de rede e o bind9 (named):
+
+
+systemctl restart resolvconf.service 
+/etc/init.d/networking restart
+/etc/init.d/named restart
+
+nano  /etc/dhcp/dhcpd.conf
+
+subnet 172.16.0.0 netmask 255.255.255.0 {
+        range 172.16.0.11 172.16.0.20;
+        option routers 172.16.0.1;
+        option domain-name-servers 172.16.28.21, 8.8.8.8;
+}
+
+cd /etc/bind
+ls -la
+
+nano /etc/bind/named.conf.default-zones 
+
+zone "xchallenge.br" {
+	type master;
+	file "/etc/bind/db.redes-br";
+};
+
+cd /etc/bind
+
+echo /etc/bind/db.redes-br
+
+
+;
+; Arquivo com conteúdo do domínio Redes.br
+;
+$TTL    604800
+@       IN      SOA     redes.br. root.redes.br. (
+        202301  ; Serial - Ano Versão
+        604800  ; Refresh
+        86400   ; Retry
+        2419200 ; Expire
+        604800 )        ; Negative Cache TTL
+;
+@       IN      NS      xchallenge.com
+@       IN      A       172.16.28.21
+@       IN      AAAA    ::1
+srvdns  IN      A       172.16.28.21
+srvweb  IN      A       172.16.28.21
+www     IN      CNAME   xchallenge
+
+chown bind:bind /etc/bind/db.redes-br
+
+nano /etc/bind/named.conf.options
+
+Insira o código na linha 23, logo acima do -v6:
+listen-on {any;};
+listen-on-v6 {any;};
