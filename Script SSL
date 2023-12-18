@@ -1,0 +1,39 @@
+apt install openssl
+
+openssl req $@ -new -x509 -days 365 -nodes -out
+/etc/apache2/certificado.pem -keyout
+/etc/apache2/certificado.pem
+
+ mv /etc/apache2/certificado.pem /var/www/Xchallenge
+
+ls -la /var/www/Xchallenge/
+
+nano /etc/apache2/sites-available/XchallengeHTTPS.conf
+
+
+<VirtualHost *:443>
+ServerAdmin xchallenge.com
+ServerName xchallenge.com
+
+DocumentRoot /var/www/Xchallenge
+
+SSLEngine on
+SSLCertificateFile /var/www/Xchallenge/certificado.pem
+
+ErrorLog /var/www/Xchallenge/log/error.log
+</VirtualHost>
+
+Criar log e arquivo
+mkdir /var/www/Xchallenge/log/
+
+touch /var/www/Xchallenge/log/error.log
+
+chown -R www-data:www-data /var/www/Xchallenge/*
+
+chmod -R 775 /var/www/Xchallenge/*
+
+a2enmod ssl
+
+a2ensite XchallengeHTTPS.conf
+
+systemctl restart apache2
